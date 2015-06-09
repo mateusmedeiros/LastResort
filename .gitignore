@@ -1,0 +1,8 @@
+LastResort.sdf
+*.suo
+
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Content/StarterContent
