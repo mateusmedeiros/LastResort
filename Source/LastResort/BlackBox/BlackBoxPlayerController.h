@@ -11,6 +11,8 @@ class ABlackBoxPlayerController : public APlayerController
 
 public:
 	ABlackBoxPlayerController(const FObjectInitializer& ObjectInitializer);
+
+	virtual void BeginPlay() override;
 };
 
 
