@@ -4,7 +4,6 @@
 #include "GameFramework/Actor.h"
 #include "Atomo.h"
 #include "Laser.h"
-#include "StatesFases/FaseGameState.h"
 #include "TopCamera.h"
 #include "Tabuleiro.generated.h"
 
@@ -52,6 +51,10 @@ public:
 
 	/*void Marcar();*/
 	
+	const AAtomo* GetAtomo(int8 X, int8 Y) const;
+
+	const ALaser* GetLaser(DirecaoLaser Direcao, int8 Index) const;
+
 	FORCEINLINE USceneComponent* GetDR() const
 	{
 		return DR;
@@ -67,39 +70,6 @@ public:
 		return AtorCamera;
 	}
 
-	const AAtomo* GetAtomo(int8 X, int8 Y) const
-	{
-		if (GetWorld() && GetWorld()->GetGameState())
-		{
-			if (GetWorld()->GetGameState()->IsA(AFaseGameState::StaticClass()))
-			{
-				AFaseGameState* Fase = Cast<AFaseGameState>(GetWorld()->GetGameState());
-				
-				return this->Atomos[X + (Y * Fase->GetColunas())];
-			}
-		}
-		return nullptr;
-	}
-
-	const ALaser* GetLaser(DirecaoLaser Direcao, int8 Index) const
-	{
-		switch (Direcao)
-		{
-		case DirecaoLaser::CIMA:
-			return this->LasersCima[Index];
-
-		case DirecaoLaser::DIREITA:
-			return this->LasersDireita[Index];
-
-		case DirecaoLaser::BAIXO:
-			return this->LasersBaixo[Index];
-
-		case DirecaoLaser::ESQUERDA:
-			return this->LasersEsquerda[Index];
-		}
-
-		return nullptr;
-	}
 };
 
 

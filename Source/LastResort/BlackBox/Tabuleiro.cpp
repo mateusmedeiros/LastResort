@@ -3,6 +3,7 @@
 #include "LastResort.h"
 #include "Components/TextRenderComponent.h"
 #include "Atomo.h"
+#include <LastResort/BlackBoxGameMode.h>
 #include "Tabuleiro.h"
 
 #define LOCTEXT_NAMESPACE "BlackBox.Tabuleiro"
@@ -39,53 +40,51 @@ void ATabuleiro::BeginPlay()
 
 	if (GetWorld() && GetWorld()->GetGameState())
 	{
-		if (GetWorld()->GetGameState()->IsA(AFaseGameState::StaticClass()))
+		ABlackBoxGameMode* GameMode = Cast<ABlackBoxGameMode>(GetWorld()->GetAuthGameMode());
+		this->Tamanho = GameMode->GetFase()->Tamanho;
+
+		const int32 Blocos = (this -> Tamanho) * (this -> Tamanho);
+
+		for(int32 i = 0; i < Blocos; i++)
 		{
-			AFaseGameState* Fase = Cast<AFaseGameState>(GetWorld()->GetGameState());
-			this->Tamanho = Fase->GetColunas();
-
-			const int32 Blocos = (this -> Tamanho) * (this -> Tamanho);
-
-			for(int32 i = 0; i < Blocos; i++)
-			{
-				const float XOffset = (i / (this -> Tamanho)) * (this -> Espacamento);
-				const float YOffset = (i % (this -> Tamanho)) * (this -> Espacamento); 
+			const float XOffset = (i / (this -> Tamanho)) * (this -> Espacamento);
+			const float YOffset = (i % (this -> Tamanho)) * (this -> Espacamento); 
 
 
-				const FVector Local = FVector(XOffset, YOffset, 0.f) + GetActorLocation();
+			const FVector Local = FVector(XOffset, YOffset, 0.f) + GetActorLocation();
 		
-				AAtomo* NovoBloco = GetWorld() -> SpawnActor<AAtomo>(Local, FRotator(0,0,0));
+			AAtomo* NovoBloco = GetWorld() -> SpawnActor<AAtomo>(Local, FRotator(0,0,0));
 
-				if(NovoBloco != nullptr)
-				{
-					NovoBloco->AttachRootComponentToActor(this);
-					NovoBloco -> SetActorScale3D(FVector(0.4f));
-					NovoBloco -> SetTabuleiro(this);
-				}
-			}
-
-			this->ComponenteCamera->SetRelativeLocation(FVector(320.f, this->Tamanho * this->Espacamento, 1200.f));
-			/*
-			const int32 Lasers = (this->Tamanho) * 4;
-
-			for (int32 i = 0; i < Lasers; i++)
+			if(NovoBloco != nullptr)
 			{
-				const float XOffset = (i / (this->Tamanho)) * (this->Espacamento);
-				const float YOffset = (i % (this->Tamanho)) * (this->Espacamento);
-
-
-				const FVector Local = FVector(XOffset, YOffset, 0.f) + GetActorLocation();
-
-				AAtomo* NovoBloco = GetWorld()->SpawnActor<AAtomo>(Local, FRotator(0, 0, 0));
-
-				if (NovoBloco != nullptr)
-				{
-					NovoBloco->AttachRootComponentToActor(this);
-					NovoBloco->SetActorScale3D(FVector(0.4f));
-					NovoBloco->SetTabuleiro(this);
-				}
-			} /**/
+				NovoBloco->AttachRootComponentToActor(this);
+				NovoBloco -> SetActorScale3D(FVector(0.4f));
+				NovoBloco -> SetTabuleiro(this);
+			}
 		}
+
+		this->ComponenteCamera->SetRelativeLocation(FVector(320.f, this->Tamanho * this->Espacamento, 1200.f));
+		GetWorld()->GetFirstPlayerController()->SetViewTarget(Cast<AActor>(this->GetCamera()));
+		/*
+		const int32 Lasers = (this->Tamanho) * 4;
+
+		for (int32 i = 0; i < Lasers; i++)
+		{
+			const float XOffset = (i / (this->Tamanho)) * (this->Espacamento);
+			const float YOffset = (i % (this->Tamanho)) * (this->Espacamento);
+
+
+			const FVector Local = FVector(XOffset, YOffset, 0.f) + GetActorLocation();
+
+			AAtomo* NovoBloco = GetWorld()->SpawnActor<AAtomo>(Local, FRotator(0, 0, 0));
+
+			if (NovoBloco != nullptr)
+			{
+				NovoBloco->AttachRootComponentToActor(this);
+				NovoBloco->SetActorScale3D(FVector(0.4f));
+				NovoBloco->SetTabuleiro(this);
+			}
+		} /**/
 	}
 
 }
@@ -99,5 +98,36 @@ void ATabuleiro::BeginPlay()
 	//FString NovoTempo = FString::Printf(Pontuacao, this -> Tempo);
 	//this -> Tempo -> SetText(NovoTempo);
 //}
+
+const AAtomo* ATabuleiro::GetAtomo(int8 X, int8 Y) const
+{
+	if (GetWorld() && GetWorld()->GetAuthGameMode())
+	{
+		ABlackBoxGameMode* GameMode = Cast<ABlackBoxGameMode>(GetWorld()->GetAuthGameMode());
+
+		return this->Atomos[X + (Y * GameMode->GetFase()->Tamanho)];
+	}
+	return nullptr;
+}
+
+const ALaser* ATabuleiro::GetLaser(ATabuleiro::DirecaoLaser Direcao, int8 Index) const
+{
+	switch (Direcao)
+	{
+	case ATabuleiro::DirecaoLaser::CIMA:
+		return this->LasersCima[Index];
+
+	case ATabuleiro::DirecaoLaser::DIREITA:
+		return this->LasersDireita[Index];
+
+	case ATabuleiro::DirecaoLaser::BAIXO:
+		return this->LasersBaixo[Index];
+
+	case ATabuleiro::DirecaoLaser::ESQUERDA:
+		return this->LasersEsquerda[Index];
+	}
+
+	return nullptr;
+}
 
 #undef LOCTEXT_NAMESPACE
