@@ -5,7 +5,6 @@
 #include "GameFramework/GameState.h"
 #include <LastResort/BlackBoxGameMode.h>
 #include "Tabuleiro.h"
-#include "Runtime/Core/Public/Containers/Queue.h"
 #include "BlackBoxGameState.generated.h"
 
 
@@ -17,9 +16,10 @@ class LASTRESORT_API ABlackBoxGameState : public AGameState
 {
 	GENERATED_BODY()
 
-	TQueue<AAtomo*> ReferenciaAtomosSelecionados;
 
 public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<AAtomo*> ReferenciaAtomosSelecionados;
 
 	ABlackBoxGameState();
 
@@ -51,32 +51,4 @@ public:
 
 	void TickSegundo();
 
-	UFUNCTION(BlueprintCallable, Category = "Atomos Selecionados")
-	void AddAtomoSelecionado(AAtomo* Atomo)
-	{
-		this->ReferenciaAtomosSelecionados.Enqueue(Atomo);
-	}
-
-	UFUNCTION(BlueprintCallable, Category = "Atomos Selecionados")
-	AAtomo* RemoveAtomoSelecionado()
-	{
-		AAtomo* Atomo;
-		this->ReferenciaAtomosSelecionados.Dequeue(Atomo);
-		return Atomo;
-	}
-
-	UFUNCTION(BlueprintCallable, Category = "Atomos Selecionados")
-	bool IsAtomosSelecionadosVazio()
-	{
-		return this->ReferenciaAtomosSelecionados.IsEmpty();
-	}	
-	
-	UFUNCTION(BlueprintCallable, Category = "Atomos Selecionados")
-	AAtomo* PeekAtomoDaPonta()
-	{
-		AAtomo* Atomo;
-		this->ReferenciaAtomosSelecionados.Peek(Atomo);
-		return Atomo;
-	}
-	
 };

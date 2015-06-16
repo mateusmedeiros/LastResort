@@ -5,6 +5,7 @@
 #include "Atomo.h"
 #include "Laser.h"
 #include "TopCamera.h"
+#include "Solucao/Solucao.h"
 #include "Tabuleiro.generated.h"
 
 UCLASS(minimalapi)
@@ -36,6 +37,8 @@ public:
 
 	ATabuleiro(const FObjectInitializer& ObjectInitializer);
 
+	FSolucao* Solucao;
+
 	int32 _tempo;
 
 	UPROPERTY(Category = "Tabuleiro", VisibleAnywhere, BlueprintReadOnly)
@@ -45,6 +48,8 @@ public:
 	float Espacamento;
 
 	virtual void BeginPlay() override;
+
+	virtual void BeginDestroy() override;
 
 	/*void Marcar();*/
 	

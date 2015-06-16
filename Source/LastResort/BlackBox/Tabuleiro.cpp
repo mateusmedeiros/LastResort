@@ -5,6 +5,7 @@
 #include "Atomo.h"
 #include <LastResort/BlackBoxGameMode.h>
 #include "BlackBoxGameState.h"
+#include "Solucao/Solucao.h"
 #include "Tabuleiro.h"
 
 #define LOCTEXT_NAMESPACE "BlackBox.Tabuleiro"
@@ -25,6 +26,13 @@ ATabuleiro::ATabuleiro(const FObjectInitializer& ObjectInitializer)
 	this -> Espacamento = 100.f;
 }
 
+
+void ATabuleiro::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	delete this->Solucao;
+}
 
 void ATabuleiro::BeginPlay()
 {
@@ -73,7 +81,7 @@ void ATabuleiro::BeginPlay()
 		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, *FString::Printf(TEXT("Origem X: %f  Y: %f  Z: %f"), OrigemAtomo.X, OrigemAtomo.Y, OrigemAtomo.Z));
 		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, *FString::Printf(TEXT("Destino X: %f  Y: %f  Z: %f"), DestinoAtomo.X, DestinoAtomo.Y, DestinoAtomo.Z));*/
 
-
+		this->Solucao = new FSolucao(this, Cast<ABlackBoxGameMode>(GetWorld()->GetAuthGameMode())->GetTotalAtomos());
 		// Lasers de cima
 		for (int32 i = 0; i < this->Tamanho; i++)
 		{
@@ -88,6 +96,19 @@ void ATabuleiro::BeginPlay()
 				NovoLaser->AttachRootComponentToActor(this);
 				NovoLaser->SetActorScale3D(ScaleLaser);
 				NovoLaser->SetTabuleiro(this);
+				
+				if (Solucao->LasersCima[i].Estado == ELaserEstado::H)
+				{
+					NovoLaser->Valor->SetText(LOCTEXT("ValorH", "H"));
+				} 
+				else if (Solucao->LasersCima[i].Estado == ELaserEstado::R)
+				{
+					NovoLaser->Valor->SetText(LOCTEXT("ValorR", "R"));
+				}
+				else
+				{
+					NovoLaser->Valor->SetText(FString::Printf(TEXT("%d"), Solucao->LasersCima[i].Numero));
+				}
 				this->LasersCima.Add(NovoLaser);
 			}
 		}
@@ -106,6 +127,18 @@ void ATabuleiro::BeginPlay()
 				NovoLaser->AttachRootComponentToActor(this);
 				NovoLaser->SetActorScale3D(ScaleLaser);
 				NovoLaser->SetTabuleiro(this);
+				if (Solucao->LasersDireita[i].Estado == ELaserEstado::H)
+				{
+					NovoLaser->Valor->SetText(LOCTEXT("ValorH", "H"));
+				}
+				else if (Solucao->LasersDireita[i].Estado == ELaserEstado::R)
+				{
+					NovoLaser->Valor->SetText(LOCTEXT("ValorR", "R"));
+				}
+				else
+				{
+					NovoLaser->Valor->SetText(FString::Printf(TEXT("%d"), Solucao->LasersDireita[i].Numero));
+				}
 				this->LasersDireita.Add(NovoLaser);
 			}
 		}
@@ -113,7 +146,7 @@ void ATabuleiro::BeginPlay()
 		// Lasers de baixo
 		for (int32 i = 0; i < this->Tamanho; i++)
 		{
-			FVector AtomoCorrespondente = this->GetAtomo(i, this->Tamanho - 1)->GetActorLocation();
+			FVector AtomoCorrespondente = this->GetAtomo((this->Tamanho - 1) - i, this->Tamanho - 1)->GetActorLocation();
 			const float XOffset = AtomoCorrespondente.X + (this->Espacamento * 1.5f);
 			const float YOffset = AtomoCorrespondente.Y;
 
@@ -124,6 +157,18 @@ void ATabuleiro::BeginPlay()
 				NovoLaser->AttachRootComponentToActor(this);
 				NovoLaser->SetActorScale3D(ScaleLaser);
 				NovoLaser->SetTabuleiro(this);
+				if (Solucao->LasersBaixo[i].Estado == ELaserEstado::H)
+				{
+					NovoLaser->Valor->SetText(LOCTEXT("ValorH", "H"));
+				}
+				else if (Solucao->LasersBaixo[i].Estado == ELaserEstado::R)
+				{
+					NovoLaser->Valor->SetText(LOCTEXT("ValorR", "R"));
+				}
+				else
+				{
+					NovoLaser->Valor->SetText(FString::Printf(TEXT("%d"), Solucao->LasersBaixo[i].Numero));
+				}
 				this->LasersBaixo.Add(NovoLaser);
 			}
 		}
@@ -131,7 +176,7 @@ void ATabuleiro::BeginPlay()
 		// Lasers da esquerda
 		for (int32 i = 0; i < this->Tamanho; i++)
 		{
-			FVector AtomoCorrespondente = this->GetAtomo(0, i)->GetActorLocation();
+			FVector AtomoCorrespondente = this->GetAtomo(0, (this->Tamanho - 1) - i)->GetActorLocation();
 			const float XOffset = AtomoCorrespondente.X;
 			const float YOffset = AtomoCorrespondente.Y + (this->Espacamento * 1.5f);
 
@@ -142,6 +187,18 @@ void ATabuleiro::BeginPlay()
 				NovoLaser->AttachRootComponentToActor(this);
 				NovoLaser->SetActorScale3D(ScaleLaser);
 				NovoLaser->SetTabuleiro(this);
+				if (Solucao->LasersEsquerda[i].Estado == ELaserEstado::H)
+				{
+					NovoLaser->Valor->SetText(LOCTEXT("ValorH", "H"));
+				}
+				else if (Solucao->LasersEsquerda[i].Estado == ELaserEstado::R)
+				{
+					NovoLaser->Valor->SetText(LOCTEXT("ValorR", "R"));
+				}
+				else
+				{
+					NovoLaser->Valor->SetText(FString::Printf(TEXT("%d"), Solucao->LasersEsquerda[i].Numero));
+				}
 				this->LasersEsquerda.Add(NovoLaser);
 			}
 		}

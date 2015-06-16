@@ -30,10 +30,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	UStaticMeshComponent* Corpo;
 
-	
 public:	
 	ALaser();
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UTextRenderComponent* Valor;
+
+	UFUNCTION(BlueprintCallable, Category = "Eventos Laser")
+	void ActionClick(UPrimitiveComponent* ClickedComp);
+	
 	virtual void BeginPlay() override;	
 
 	const ATabuleiro* GetTabuleiro()

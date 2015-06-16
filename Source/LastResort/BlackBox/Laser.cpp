@@ -3,6 +3,7 @@
 #include "LastResort.h"
 #include "Laser.h"
 
+#define LOCTEXT_NAMESPACE "ALaser"
 
 ALaser::ALaser()
 {
@@ -56,9 +57,27 @@ ALaser::ALaser()
 	Corpo->SetMaterial(1, ObjetosEstaticos.MaterialCorpo1.Object);
 	Corpo->SetRelativeLocationAndRotation(FVector(0.f), FRotator(-20.f, 0.f, 0.f));
 	Corpo->SetRelativeScale3D(FVector(1));
+	Corpo->OnClicked.AddDynamic(this, &ALaser::ActionClick);
 	Corpo->AttachTo(this->DR);
 	
+	UTextRenderComponent* Valor = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Corpo"));
+	Valor->SetRelativeLocationAndRotation(FVector(180.f, 75.f, 265.f), FRotator(90.f, 0.f, 0.f));
+	Valor->SetWorldSize(0.f);
+	Valor->bCastDynamicShadow = true;
+	Valor->AttachTo(this->DR);
+	Valor->SetText(FText::GetEmpty());
+	Valor->SetTextRenderColor(FColor::Blue);
 
+}
+
+void ALaser::ActionClick(UPrimitiveComponent* ClickedComp)
+{
+	static bool Ativado = false;
+	if (!Ativado)
+	{
+		Ativado = true;
+		this->Valor->SetWorldSize(240.f);
+	}
 }
 
 void ALaser::BeginPlay()
@@ -67,3 +86,4 @@ void ALaser::BeginPlay()
 	
 }
 
+#undef LOCTEXT_NAMESPACE

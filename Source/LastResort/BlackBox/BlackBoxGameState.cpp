@@ -20,6 +20,7 @@ bool ABlackBoxGameState::IncrementarAtomos(AAtomo* Atomo)
 	if (this->AtomosSelecionados < (Cast<ABlackBoxGameMode>(GetWorld()->GetAuthGameMode())->GetFase()->Atomos))
 	{
 		this->AtomosSelecionados++;
+		this->ReferenciaAtomosSelecionados.AddUnique(Atomo);
 		this->OnUpdateAtomos.Broadcast(this->AtomosSelecionados, Atomo->X, Atomo->Y);
 		return true;
 	}
@@ -32,6 +33,7 @@ bool ABlackBoxGameState::DecrementarAtomos(AAtomo* Atomo)
 	if (this->AtomosSelecionados > 0)
 	{
 		this->AtomosSelecionados--;
+		this->ReferenciaAtomosSelecionados.Remove(Atomo);
 		this->OnUpdateAtomos.Broadcast(this->AtomosSelecionados, Atomo->X, Atomo->Y);
 		return true;
 	}
