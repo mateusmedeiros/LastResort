@@ -100,13 +100,31 @@ FSolucao::FSolucao(ATabuleiro* Tabuleiro, int32 NumeroAtomosExistentes)
 		this->Atomos.Add(FAtomoSolucao(i % Tabuleiro->Tamanho, i / Tabuleiro->Tamanho));
 	}
 
-	//this->CriarNovaSolucao(NumeroAtomosExistentes);
+	this->CriarNovaSolucao(NumeroAtomosExistentes);
 	//this->CriarLasers();
 }
 
 void FSolucao::CriarNovaSolucao(int32 NumeroAtomosExistentes)
 {
+	//NumeroAtomosExistentes
+	while (true)
+	{
+		int32 r = FMath::RandRange(0, this->Atomos.Num());
+		if (this->Atomos[r].Existe)
+		{
+			continue;
+		}
+		else
+		{
+			this->Atomos[r].Existe = true;
+			if (!(--NumeroAtomosExistentes))
+			{
+				break;
+			}
+		}
+	}
 	
+	/*
 	TLockFreePointerList<int32> Stack;
 	TQueue<bool> FilaEscolhas{};
 	TArray<int32> Escolhidos{};
@@ -161,6 +179,7 @@ void FSolucao::CriarNovaSolucao(int32 NumeroAtomosExistentes)
 			i = Vizinho;
 		}
 	}
+	*/
 }
 
 void FSolucao::CriarLasers()
@@ -267,59 +286,6 @@ void FSolucao::CriarLasers()
 
 }
 
-
-bool FSolucao::AtomoNaoVisitado()
-{
-	for (auto it : this->Atomos)
-	{
-		if (!it.Visitado)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-int32 FSolucao::VizinhoAleatorioNaoVisitadoOuMenos1(int32 X, int32 Y)
-{
-	int32 Vizinho = -1;
-	TStaticArray<int32, 4> Vizinhos;
-	Vizinhos[0] = -1;
-	Vizinhos[1] = -1;
-	Vizinhos[2] = -1;
-	Vizinhos[3] = -1;
-
-	if (X > 0 && !(Atomos[(Y * this->Tamanho) + (X - 1)].Visitado))
-	{
-		Vizinhos[0] = (Y * this->Tamanho) + (X - 1);
-	}
-
-	if (Y > 0 && !(Atomos[((Y - 1) * this->Tamanho) + X].Visitado))
-	{
-		Vizinhos[1] = ((Y - 1) * this->Tamanho) + X;
-	}
-
-	if (X < (this->Tamanho - 1) && !(Atomos[(Y * this->Tamanho) + (X + 1)].Visitado))
-	{
-		Vizinhos[2] = (Y * this->Tamanho) + (X + 1);
-	}
-
-	if (Y < (this->Tamanho - 1) && !(Atomos[((Y + 1) * this->Tamanho) + X].Visitado))
-	{
-		Vizinhos[3] = ((Y + 1) * this->Tamanho) + X;
-	}
-
-	if (Vizinhos[0] != -1 || Vizinhos[1] != -1 || Vizinhos[2] != -1 || Vizinhos[3] != -1)
-	{
-		while (Vizinho == -1)
-		{
-			Vizinho = Vizinhos[FMath::RandRange(0, 3)];
-		}
-	}
-
-	return Vizinho;
-}
 
 
 FLaserSolucao* FSolucao::GetLaserIndexHelper(int32 Index)

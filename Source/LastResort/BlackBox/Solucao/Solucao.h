@@ -32,8 +32,6 @@ struct LASTRESORT_API FSolucao
 
 	void CriarNovaSolucao(int32 NumeroAtomosExistentes);
 	void CriarLasers();
-	bool AtomoNaoVisitado();
-	int32 VizinhoAleatorioNaoVisitadoOuMenos1(int32 X, int32 Y);
 
 	FLaserSolucao* GetLaserIndexHelper(int32 Index);
 	ELaserLado LadoContrario(ELaserLado Lado);

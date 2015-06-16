@@ -96,7 +96,7 @@ void ATabuleiro::BeginPlay()
 				NovoLaser->AttachRootComponentToActor(this);
 				NovoLaser->SetActorScale3D(ScaleLaser);
 				NovoLaser->SetTabuleiro(this);
-				
+				/*
 				if (Solucao->LasersCima[i].Estado == ELaserEstado::H)
 				{
 					NovoLaser->Valor->SetText(LOCTEXT("ValorH", "H"));
@@ -108,7 +108,7 @@ void ATabuleiro::BeginPlay()
 				else
 				{
 					NovoLaser->Valor->SetText(FString::Printf(TEXT("%d"), Solucao->LasersCima[i].Numero));
-				}
+				}*/
 				this->LasersCima.Add(NovoLaser);
 			}
 		}
@@ -126,7 +126,7 @@ void ATabuleiro::BeginPlay()
 			{
 				NovoLaser->AttachRootComponentToActor(this);
 				NovoLaser->SetActorScale3D(ScaleLaser);
-				NovoLaser->SetTabuleiro(this);
+				NovoLaser->SetTabuleiro(this);/*
 				if (Solucao->LasersDireita[i].Estado == ELaserEstado::H)
 				{
 					NovoLaser->Valor->SetText(LOCTEXT("ValorH", "H"));
@@ -138,7 +138,7 @@ void ATabuleiro::BeginPlay()
 				else
 				{
 					NovoLaser->Valor->SetText(FString::Printf(TEXT("%d"), Solucao->LasersDireita[i].Numero));
-				}
+				}*/
 				this->LasersDireita.Add(NovoLaser);
 			}
 		}
@@ -156,7 +156,7 @@ void ATabuleiro::BeginPlay()
 			{
 				NovoLaser->AttachRootComponentToActor(this);
 				NovoLaser->SetActorScale3D(ScaleLaser);
-				NovoLaser->SetTabuleiro(this);
+				NovoLaser->SetTabuleiro(this); /*
 				if (Solucao->LasersBaixo[i].Estado == ELaserEstado::H)
 				{
 					NovoLaser->Valor->SetText(LOCTEXT("ValorH", "H"));
@@ -168,7 +168,7 @@ void ATabuleiro::BeginPlay()
 				else
 				{
 					NovoLaser->Valor->SetText(FString::Printf(TEXT("%d"), Solucao->LasersBaixo[i].Numero));
-				}
+				}*/
 				this->LasersBaixo.Add(NovoLaser);
 			}
 		}
@@ -186,7 +186,7 @@ void ATabuleiro::BeginPlay()
 			{
 				NovoLaser->AttachRootComponentToActor(this);
 				NovoLaser->SetActorScale3D(ScaleLaser);
-				NovoLaser->SetTabuleiro(this);
+				NovoLaser->SetTabuleiro(this); /*
 				if (Solucao->LasersEsquerda[i].Estado == ELaserEstado::H)
 				{
 					NovoLaser->Valor->SetText(LOCTEXT("ValorH", "H"));
@@ -198,7 +198,7 @@ void ATabuleiro::BeginPlay()
 				else
 				{
 					NovoLaser->Valor->SetText(FString::Printf(TEXT("%d"), Solucao->LasersEsquerda[i].Numero));
-				}
+				}*/
 				this->LasersEsquerda.Add(NovoLaser);
 			}
 		}
