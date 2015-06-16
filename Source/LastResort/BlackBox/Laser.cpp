@@ -61,7 +61,6 @@ ALaser::ALaser()
 
 }
 
-// Called when the game starts or when spawned
 void ALaser::BeginPlay()
 {
 	Super::BeginPlay();

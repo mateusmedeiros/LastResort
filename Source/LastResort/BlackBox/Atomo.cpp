@@ -1,19 +1,25 @@
 // Copyright (c) 2015 Mateus Bezerra
 
 #include "LastResort.h"
-#include "Atomo.h"
+#include "BlackBoxGameState.h"
+#include <LastResort/BlackBoxGameMode.h>
 #include "Tabuleiro.h"
+#include "Atomo.h"
 
 AAtomo::AAtomo(const FObjectInitializer& ObjectInitializer)	: Super(ObjectInitializer)
 {
 
 	struct FConstructorStatics
 	{
-		ConstructorHelpers::FObjectFinderOptional<UStaticMesh> MeshEsfera;
-		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> MaterialPadraoEsfera;
+		ConstructorHelpers::FObjectFinder<UStaticMesh> MeshEsfera;
+		ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MaterialNaoSelecionado;
+		ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MaterialSelecionado;
 
 		FConstructorStatics()
-			: MeshEsfera(TEXT("/Game/Mesh/Shape_Sphere.Shape_Sphere")), MaterialPadraoEsfera(TEXT("MaterialInstanceConstant'/Game/Materials/AtomoNaoSelecionado.AtomoNaoSelecionado'")) {}
+			: 
+		MeshEsfera(TEXT("/Game/Mesh/Shape_Sphere.Shape_Sphere")), 
+		MaterialNaoSelecionado(TEXT("MaterialInstanceConstant'/Game/Materials/AtomoNaoSelecionado.AtomoNaoSelecionado'")),
+		MaterialSelecionado(TEXT("MaterialInstanceConstant'/Game/Materials/AtomoSelecionado.AtomoSelecionado'")) {}
 	};
 
 	static FConstructorStatics ObjetosEstaticos;
@@ -21,35 +27,55 @@ AAtomo::AAtomo(const FObjectInitializer& ObjectInitializer)	: Super(ObjectInitia
 	this -> DR = CreateDefaultSubobject<USceneComponent>(TEXT("DRAtomo"));
 	this -> RootComponent = this -> DR;
 
-	this -> MeshHighlightAtomo = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AtomoMesh"));
-	this -> MeshHighlightAtomo -> SetStaticMesh(ObjetosEstaticos.MeshEsfera.Get());
-	this -> MeshHighlightAtomo -> SetRelativeScale3D(FVector(2.f, 2.f, 2.f));
-	this -> MeshHighlightAtomo -> SetRelativeLocation(FVector(0.f, 0.f, 25.f));
-	this -> MeshHighlightAtomo -> SetMaterial(0, Cast<UMaterialInterface>(ObjetosEstaticos.MaterialPadraoEsfera.Get()));
-	this -> MeshHighlightAtomo -> AttachTo(this -> DR);
-	this -> MeshHighlightAtomo -> OnClicked.AddDynamic(this, &AAtomo::BlockClicked);
-	//this -> MeshHighlightAtomo -> OnInputTouchBegin.AddDynamic(this, &AAtomo::OnFingerPressedBlock);
+	this->Ativo = false;
+
+	this -> Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AtomoMesh"));
+	this -> Mesh -> SetStaticMesh(ObjetosEstaticos.MeshEsfera.Object);
+	this -> Mesh -> SetRelativeScale3D(FVector(2.f, 2.f, 2.f));
+	this -> Mesh -> SetRelativeLocation(FVector(0.f, 0.f, 25.f));
+	this -> Mesh -> SetMaterial(0, Cast<UMaterialInterface>(ObjetosEstaticos.MaterialNaoSelecionado.Object));
+	this -> Mesh -> AttachTo(this -> DR);
+	this -> Mesh -> OnClicked.AddDynamic(this, &AAtomo::BlockClicked);
+
+	this->MaterialNaoSelecionado = ObjetosEstaticos.MaterialNaoSelecionado.Object;
+	this->MaterialSelecionado = ObjetosEstaticos.MaterialSelecionado.Object;
+	//this -> Mesh -> OnInputTouchBegin.AddDynamic(this, &AAtomo::OnFingerPressedBlock);
 
 	//this -> MaterialHighlightAtomo = ObjetosEstaticos.OrangeMaterial.Get();
 }
 
 void AAtomo::BlockClicked(UPrimitiveComponent* ClickedComp)
 {
-	if(Ativo)
+	/*
+	FVector Local = this->GetActorLocation();
+	int32 It = 0;
+	int32 It2 = 0;
+	for (It = 0; It < this->Tabuleiro->Tamanho * this->Tabuleiro->Tamanho; It++)
 	{
-		Ativo = false;
-		static FString CaminhoMaterial = TEXT("MaterialInstanceConstant'/Game/Materials/AtomoNaoSelecionado.AtomoNaoSelecionado'");
+		if (this == this->Tabuleiro->Atomos[It])
+		{
+			break;
+		}
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 50.f, FColor::Yellow, FString::Printf(TEXT("X: %f  Y: %f  Z: %f "), Local.X, Local.Y, Local.Z));
 
-		static UMaterialInstance* Material = Cast<UMaterialInstance>(StaticLoadObject(UMaterialInstanceConstant::StaticClass(), this, *CaminhoMaterial));
-		this -> MeshHighlightAtomo -> SetMaterial(0, Cast<UMaterialInterface>(Material));
+	GEngine->AddOnScreenDebugMessage(-1, 50.f, FColor::Blue, FString::Printf(TEXT("Atomos[%d];"), It));
+	*/
+	if (Ativo)
+	{
+		if (Cast<ABlackBoxGameState>(GetWorld()->GetGameState())->DecrementarAtomos(this))
+		{
+			Ativo = false;
+			this->Mesh->SetMaterial(0, Cast<UMaterialInterface>(this->MaterialNaoSelecionado));
+		}
 	} 
-	else
+	else 
 	{
-		Ativo = true;
-		static FString CaminhoMaterial = TEXT("MaterialInstanceConstant'/Game/Materials/AtomoSelecionado.AtomoSelecionado'");
-
-		static UMaterialInstance* Material = Cast<UMaterialInstance>(StaticLoadObject(UMaterialInstanceConstant::StaticClass(), this, *CaminhoMaterial));
-		this -> MeshHighlightAtomo->SetMaterial(0, Cast<UMaterialInterface>(Material));
+		if (Cast<ABlackBoxGameState>(GetWorld()->GetGameState())->IncrementarAtomos(this)) 
+		{
+			Ativo = true;
+			this->Mesh->SetMaterial(0, Cast<UMaterialInterface>(this->MaterialSelecionado));
+		}
 	}
 }
 

@@ -5,10 +5,16 @@
 #include "GameFramework/Actor.h"
 #include "Laser.generated.h"
 
+
+class ATabuleiro;
+
 UCLASS()
 class LASTRESORT_API ALaser : public AActor
 {
 	GENERATED_BODY()
+
+	UPROPERTY()
+	ATabuleiro* Tabuleiro;
 
 protected:
 
@@ -29,5 +35,14 @@ public:
 	ALaser();
 
 	virtual void BeginPlay() override;	
+
+	const ATabuleiro* GetTabuleiro()
+	{
+		return Tabuleiro;
+	}
 	
+	void SetTabuleiro(ATabuleiro* Tabuleiro)
+	{
+		this->Tabuleiro = Tabuleiro;
+	}
 };

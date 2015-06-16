@@ -9,6 +9,11 @@ class ABlackBoxPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+
+protected:
+	
+	
+
 public:
 	ABlackBoxPlayerController(const FObjectInitializer& ObjectInitializer);
 

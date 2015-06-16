@@ -17,7 +17,7 @@ int Algoritmos::doStuff()
 	int32 a = 8;
 	int32 b = 8;
 	TArray<int32> IntArray;
-	IntArray.Init(8 * 8);
+	IntArray.SetNumUninitialized(8 * 8);
 
 
 

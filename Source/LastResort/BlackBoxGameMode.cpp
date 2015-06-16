@@ -4,6 +4,7 @@
 #include "BlackBox/BlackBoxPlayerController.h"
 #include "BlackBox/BlackBoxGameState.h"
 #include "BlackBox/Tabuleiro.h"
+#include "LastResortGameInstance.h"
 #include "BlackBoxGameMode.h"
 
 ABlackBoxGameMode::ABlackBoxGameMode(const FObjectInitializer& ObjectInitializer)
@@ -11,22 +12,29 @@ ABlackBoxGameMode::ABlackBoxGameMode(const FObjectInitializer& ObjectInitializer
 {
 	this->DefaultPawnClass = nullptr;
 	this->PlayerControllerClass = ABlackBoxPlayerController::StaticClass();
-	//this->GameStateClass = ABlackBoxGameState::StaticClass();
+	//this->PlayerControllerClass = ConstructorHelpers::FObjectFinder<UClass>(TEXT("Blueprint'/Game/Blueprints/BlackBoxPlayerController.BlackBoxPlayerController_C'")).Object;
+	this->GameStateClass = ABlackBoxGameState::StaticClass();
 
-	TArray<FaseStruct> Fases{};
+	TArray<FFaseStruct> Fases{};
 	this->Fases = Fases;
 
 	//this->GameStateClass = AFasesGameState::StaticClass();
-	FaseStruct Fase1{};
+	FFaseStruct Fase1{};
 	Fase1.Tamanho = 8;
+	Fase1.Atomos = 3;
+	Fase1.Indice = 1;
 	this->Fases.Add(Fase1);
 
-	FaseStruct Fase2{};
+	FFaseStruct Fase2{};
 	Fase2.Tamanho = 9;
+	Fase2.Atomos = 4;
+	Fase2.Indice = 2;
 	this->Fases.Add(Fase2);
 
-	FaseStruct Fase3{};
+	FFaseStruct Fase3{};
 	Fase3.Tamanho = 10;
+	Fase2.Atomos = 5;
+	Fase2.Indice = 3;
 	this->Fases.Add(Fase3);
 
 	this->Fase = this->Fases[0];
@@ -35,6 +43,7 @@ ABlackBoxGameMode::ABlackBoxGameMode(const FObjectInitializer& ObjectInitializer
 void ABlackBoxGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	Cast<ABlackBoxGameState>(GetWorld()->GetGameState())->Tempo = this->GetTempoInicial();
 	InitTabuleiro();
 }
 
@@ -57,7 +66,13 @@ void ABlackBoxGameMode::NextLevel()
 	this->Fase = this->Fases[this->Fase.Indice];
 
 	this->ResetLevel();
+	Cast<ABlackBoxGameState>(GetWorld()->GetGameState())->Tempo = this->GetTempoInicial();
 	this->InitTabuleiro();
+}
+
+int32 ABlackBoxGameMode::GetTempoInicial()
+{
+	return Cast<ULastResortGameInstance>(GetWorld()->GetGameInstance())->Dificuldade.TempoMaximo;
 }
 
 bool ABlackBoxGameMode::IsFirstLevel()
@@ -70,7 +85,12 @@ bool ABlackBoxGameMode::IsLastLevel()
 	return this->Fase.Indice == this->Fases.Num();
 }
 
-const FaseStruct* ABlackBoxGameMode::GetFase()
+const FFaseStruct* ABlackBoxGameMode::GetFase()
 {
 	return &(this->Fase);
+}
+
+int32 ABlackBoxGameMode::GetTotalAtomos()
+{
+	return this->GetFase()->Atomos;
 }

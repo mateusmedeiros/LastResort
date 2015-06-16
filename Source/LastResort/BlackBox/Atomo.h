@@ -9,22 +9,25 @@ class AAtomo : public AActor
 {
 	GENERATED_BODY()
 
-	bool Ativo;
 
 protected:
 
 	AAtomo(const FObjectInitializer& ObjectInitializer);
 
+
 	UPROPERTY(Category = "Atomo", BlueprintReadOnly, VisibleAnywhere)
 	class USceneComponent* DR;
 
 	UPROPERTY(Category = "Atomo", BlueprintReadOnly, VisibleAnywhere)
-	class UStaticMeshComponent* MeshHighlightAtomo;
+	class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(Category = "Atomo", BlueprintReadOnly, VisibleAnywhere)
-	class UMaterialInstance* MaterialHighlightAtomo;
+	UPROPERTY(Category = "Atomo", BlueprintReadWrite, VisibleAnywhere)
+	class UMaterialInstanceConstant* MaterialSelecionado;
 
-	UPROPERTY(Category = "Atomo", BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(Category = "Atomo", BlueprintReadWrite, VisibleAnywhere)
+	class UMaterialInstanceConstant* MaterialNaoSelecionado;
+
+	UPROPERTY()
 	class ATabuleiro* Tabuleiro;
 
 	UFUNCTION()
@@ -34,6 +37,15 @@ protected:
 	void OnFingerPressedBlock(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent);
 
 public:
+
+	UPROPERTY(Category = "Atomo", BlueprintReadWrite, VisibleAnywhere)
+	bool Ativo = false;
+
+	UPROPERTY(Category = "Atomo", BlueprintReadOnly, VisibleAnywhere)
+	int32 X;
+
+	UPROPERTY(Category = "Atomo", BlueprintReadOnly, VisibleAnywhere)
+	int32 Y;
 	
 	FORCEINLINE class USceneComponent* GetDR() const
 	{
@@ -42,7 +54,7 @@ public:
 	
 	FORCEINLINE class UStaticMeshComponent* GetMeshHighlightAtomo() const
 	{
-		return this -> MeshHighlightAtomo;
+		return this -> Mesh;
 	}
 	/*
 	FORCEINLINE class ATabuleiro* GetTabuleiro() const

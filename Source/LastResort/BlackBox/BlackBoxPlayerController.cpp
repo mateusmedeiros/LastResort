@@ -16,6 +16,8 @@ ABlackBoxPlayerController::ABlackBoxPlayerController(const FObjectInitializer& O
 
 void ABlackBoxPlayerController::BeginPlay()
 {
+	//Super::BeginPlay();
+	//this->
 	/*
 	ATopCamera* Camera = GetWorld()->SpawnActor<ATopCamera>(FVector(-320, 820, 1200), FRotator(-70, -90, 0));
 	this->SetViewTarget(Cast<AActor>(Camera)); 

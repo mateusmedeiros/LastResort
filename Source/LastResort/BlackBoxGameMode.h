@@ -1,25 +1,24 @@
 // Copyright (c) 2015 Mateus Bezerra
 #pragma once
+
+class ATabuleiro;
+
 #include "GameFramework/GameMode.h"
 #include "BlackBoxGameMode.generated.h"
 
-UENUM(BlueprintType)
-enum class DificuldadeEnum : uint8
-{
-	FACIL UMETA(DisplayName = "Fácil"),
-	MEDIO UMETA(DisplayName = "Médio"),
-	DIFICIL UMETA(DisplayName = "Difícil")
-};
 
-USTRUCT()
-struct FaseStruct
+USTRUCT(BlueprintType)
+struct FFaseStruct
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 Tamanho;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	int32 Atomos;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 Indice;
 };
 
@@ -30,14 +29,12 @@ class ABlackBoxGameMode : public AGameMode
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Configurações")
-	DificuldadeEnum Dificuldade;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Configurações")
-	TArray<FaseStruct> Fases;
+	TArray<FFaseStruct> Fases;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configurações")
-	FaseStruct Fase;
+	FFaseStruct Fase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay")
 	ATabuleiro* Tabuleiro;
@@ -54,13 +51,19 @@ public:
 
 	void InitTabuleiro();
 
+	int32 GetTempoInicial();
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void NextLevel();
 
 	bool IsLastLevel();
 
 	bool IsFirstLevel();
 
-	const FaseStruct* GetFase();
+	const FFaseStruct* GetFase();
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	int32 GetTotalAtomos();
 };
 
 

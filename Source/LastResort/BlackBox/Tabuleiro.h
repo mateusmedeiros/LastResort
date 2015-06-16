@@ -12,21 +12,18 @@ class ATabuleiro : public AActor
 {
 	GENERATED_BODY()
 
-	TArray<AAtomo*> Atomos;
+	TArray< AAtomo* > Atomos;
 
-	TArray<ALaser*> LasersCima;
-	TArray<ALaser*> LasersDireita;
-	TArray<ALaser*> LasersBaixo;
-	TArray<ALaser*> LasersEsquerda;
+	TArray< ALaser* > LasersCima;
+	TArray< ALaser* > LasersDireita;
+	TArray< ALaser* > LasersBaixo;
+	TArray< ALaser* > LasersEsquerda;
 
 
 protected:
 
 	UPROPERTY(Category = "Tabuleiro", BlueprintReadOnly, VisibleAnywhere)
 	USceneComponent* DR;
-
-	UPROPERTY(Category = "Tabuleiro", VisibleDefaultsOnly, BlueprintReadOnly)
-	UTextRenderComponent* Tempo;
 
 	UPROPERTY(Category = "Tabuleiro", BlueprintReadOnly, VisibleAnywhere)
 	UChildActorComponent* ComponenteCamera;
@@ -51,7 +48,8 @@ public:
 
 	/*void Marcar();*/
 	
-	const AAtomo* GetAtomo(int8 X, int8 Y) const;
+	UFUNCTION(Category = "Tabuleiro", BlueprintCallable)
+	AAtomo* GetAtomo(int32 X, int32 Y) const;
 
 	const ALaser* GetLaser(DirecaoLaser Direcao, int8 Index) const;
 
@@ -60,11 +58,6 @@ public:
 		return DR;
 	}
 	
-	FORCEINLINE UTextRenderComponent* GetTempo() const
-	{
-		return Tempo;
-	}
-
 	FORCEINLINE ATopCamera* GetCamera() const
 	{
 		return AtorCamera;
